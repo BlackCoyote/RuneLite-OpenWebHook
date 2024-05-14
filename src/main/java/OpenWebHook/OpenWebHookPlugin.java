@@ -1,5 +1,7 @@
 package OpenWebHook;
 
+import OpenWebHook.WebHookMessages.LoggedInMessage;
+import OpenWebHook.WebHookMessages.LoggedOutMessage;
 import com.google.inject.Provides;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +21,11 @@ import net.runelite.client.plugins.PluginDescriptor;
 public class OpenWebHookPlugin extends Plugin
 {
 	@Inject
-	private Client client;
+	public Client client;
+
+	public static OpenWebHookPlugin instance;
+
+	public WebHookSender webHookSender = new WebHookSender();
 
 	@Inject
 	private OpenWebHookConfig config;
@@ -27,13 +33,13 @@ public class OpenWebHookPlugin extends Plugin
 	@Override
 	protected void startUp() throws Exception
 	{
-		log.info("Example started!");
+		instance = this;
 	}
 
 	@Override
 	protected void shutDown() throws Exception
 	{
-		log.info("Example stopped!");
+		new LoggedOutMessage().Send();
 	}
 
 	@Subscribe
@@ -41,7 +47,10 @@ public class OpenWebHookPlugin extends Plugin
 	{
 		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
 		{
-			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "Example says " + config.greeting(), null);
+			new LoggedInMessage().Send();
+		}
+		else if (gameStateChanged.getGameState() == GameState.CONNECTION_LOST) {
+			new LoggedOutMessage().Send();
 		}
 	}
 
