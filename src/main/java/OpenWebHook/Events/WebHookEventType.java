@@ -7,4 +7,5 @@ public enum WebHookEventType {
         Unknown,
         GameStateChanged,
         ChatSent,
+        LootReceived,
 }
