@@ -5,6 +5,6 @@ package OpenWebHook.Events;
  */
 public enum WebHookEventType {
         Unknown,
-        LoggedIn,
-        LoggedOut,
+        GameStateChanged,
+        ChatSent,
 }

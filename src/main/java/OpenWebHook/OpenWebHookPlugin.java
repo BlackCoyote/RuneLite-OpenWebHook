@@ -1,24 +1,26 @@
 package OpenWebHook;
 
 import OpenWebHook.Endpoints.Endpoint;
-import OpenWebHook.Events.LoggedInEvent;
-import OpenWebHook.Events.LoggedOutEvent;
+import OpenWebHook.Events.ChatSentEvent;
+import OpenWebHook.Events.GameStateChangedEvent;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.inject.Provides;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
-import net.runelite.api.GameState;
+import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.util.Text;
 
 @Slf4j
 @PluginDescriptor(
-	name = "Example"
+	name = "OpenWebHook"
 )
 public class OpenWebHookPlugin extends Plugin
 {
@@ -45,18 +47,20 @@ public class OpenWebHookPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
-		new LoggedOutEvent().Send();
 	}
 
 	@Subscribe
 	public void onGameStateChanged(GameStateChanged gameStateChanged)
 	{
-		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
-		{
-			new LoggedInEvent().Send();
-		}
-		else if (gameStateChanged.getGameState() == GameState.CONNECTION_LOST) {
-			new LoggedOutEvent().Send();
+		new GameStateChangedEvent(gameStateChanged.getGameState()).Send();
+	}
+
+	@Subscribe
+	public void onChatMessage(ChatMessage message) {
+		String sender = Text.standardize(message.getName());
+		String player = Text.standardize(client.getLocalPlayer().getName());
+		if (sender != null && sender.equalsIgnoreCase(player)) {
+			new ChatSentEvent(message.getMessage()).Send();
 		}
 	}
 
