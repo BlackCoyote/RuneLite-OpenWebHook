@@ -1,13 +1,15 @@
 package OpenWebHook.Endpoints;
 
+import OpenWebHook.API.EventMessage;
+import OpenWebHook.API.PayloadTypeProperty;
 import OpenWebHook.Events.WebHookEvent;
+import com.google.gson.JsonObject;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -84,9 +86,10 @@ public class Endpoint {
      * @param event The WebHookEvent to send.
      */
     public static void SendEvent(WebHookEvent event) {
-        String payload = event.ToJson();
+        String message = new EventMessage(event).AsPayload();
+
         for (Endpoint endpoint : endpoints) {
-            endpoint.Send(payload);
+            endpoint.Send(message);
         }
     }
 

@@ -3,6 +3,8 @@ package OpenWebHook;
 import OpenWebHook.Endpoints.Endpoint;
 import OpenWebHook.Events.LoggedInEvent;
 import OpenWebHook.Events.LoggedOutEvent;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.inject.Provides;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +29,11 @@ public class OpenWebHookPlugin extends Plugin
 
 	@Inject
 	private OpenWebHookConfig config;
+
+	/**
+	 * The JSON converter used to serialize the contents being sent over the webhooks.
+	 */
+	public static final Gson jsonConverter = new GsonBuilder().serializeNulls().create();
 
 	@Override
 	protected void startUp() throws Exception
