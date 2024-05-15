@@ -108,6 +108,9 @@ public class OpenWebHookPlugin extends Plugin
 	 */
 	@Subscribe
 	public void onChatMessage(ChatMessage message) {
+		if (message.getName() == null ||client.getLocalPlayer().getName() == null) {
+			return;
+		}
 		String sender = Text.standardize(message.getName());
 		String player = Text.standardize(client.getLocalPlayer().getName());
 		if (sender != null && sender.equalsIgnoreCase(player)) {
