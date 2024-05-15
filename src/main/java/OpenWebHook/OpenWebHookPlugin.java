@@ -1,11 +1,11 @@
 package OpenWebHook;
 
-import OpenWebHook.WebHookMessages.LoggedInMessage;
-import OpenWebHook.WebHookMessages.LoggedOutMessage;
+import OpenWebHook.Endpoints.Endpoint;
+import OpenWebHook.Events.LoggedInEvent;
+import OpenWebHook.Events.LoggedOutEvent;
 import com.google.inject.Provides;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.events.GameStateChanged;
@@ -25,8 +25,6 @@ public class OpenWebHookPlugin extends Plugin
 
 	public static OpenWebHookPlugin instance;
 
-	public WebHookSender webHookSender = new WebHookSender();
-
 	@Inject
 	private OpenWebHookConfig config;
 
@@ -34,12 +32,13 @@ public class OpenWebHookPlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		instance = this;
+		ConfigureEndpoints();
 	}
 
 	@Override
 	protected void shutDown() throws Exception
 	{
-		new LoggedOutMessage().Send();
+		new LoggedOutEvent().Send();
 	}
 
 	@Subscribe
@@ -47,10 +46,10 @@ public class OpenWebHookPlugin extends Plugin
 	{
 		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
 		{
-			new LoggedInMessage().Send();
+			new LoggedInEvent().Send();
 		}
 		else if (gameStateChanged.getGameState() == GameState.CONNECTION_LOST) {
-			new LoggedOutMessage().Send();
+			new LoggedOutEvent().Send();
 		}
 	}
 
@@ -58,5 +57,9 @@ public class OpenWebHookPlugin extends Plugin
 	OpenWebHookConfig provideConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(OpenWebHookConfig.class);
+	}
+
+	public void ConfigureEndpoints() {
+		Endpoint.BuildFromURLs(new String[] { "http://peebot.blackcoyote.net:9000" }); // TODO read from plugin configuration
 	}
 }
