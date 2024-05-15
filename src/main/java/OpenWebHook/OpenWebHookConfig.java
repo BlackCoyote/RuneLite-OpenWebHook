@@ -4,16 +4,14 @@ import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 
-@ConfigGroup("example")
+@ConfigGroup("OpenWebHook")
 public interface OpenWebHookConfig extends Config
 {
 	@ConfigItem(
-		keyName = "greeting",
-		name = "Welcome Greeting",
-		description = "The message to show to the user when they login"
+		keyName = "webhooks",
+		name = "Webhook URLs",
+		description = "The URLs to send webhook events to, separated by a comma.",
+		section = "Webhook URLs"
 	)
-	default String greeting()
-	{
-		return "Hello";
-	}
+	String webhooks();
 }

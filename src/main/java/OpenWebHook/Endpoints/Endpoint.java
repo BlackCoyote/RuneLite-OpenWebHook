@@ -72,7 +72,7 @@ public class Endpoint {
      * Updates the list of active endpoints from a list of URLs.
      * @param urls The URLs to make endpoints for.
      */
-    public static void BuildFromURLs(String[] urls) {
+    public static void BuildFromURLs(List<String> urls) {
         List<Endpoint> newEndpoints = new ArrayList<>();
         for (String url : urls) {
             Endpoint newEndpoint = new Endpoint(url);

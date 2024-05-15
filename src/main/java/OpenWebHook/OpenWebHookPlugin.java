@@ -15,6 +15,7 @@ import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.WorldChanged;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.events.NpcLootReceived;
 import net.runelite.client.events.PlayerLootReceived;
 import net.runelite.client.game.ItemManager;
@@ -25,6 +26,7 @@ import net.runelite.client.plugins.loottracker.LootReceived;
 import net.runelite.client.util.Text;
 import net.runelite.http.api.loottracker.LootRecordType;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -66,6 +68,12 @@ public class OpenWebHookPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
+	}
+
+	@Subscribe
+	public void onConfigChanged(ConfigChanged configChanged)
+	{
+		ConfigureEndpoints();
 	}
 
 	@Subscribe
@@ -138,15 +146,23 @@ public class OpenWebHookPlugin extends Plugin
 		}
 	}
 
-
-
 	@Provides
 	OpenWebHookConfig provideConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(OpenWebHookConfig.class);
 	}
 
+	/**
+	 * Sets up new endpoints based on the URLS specified in the plugin configuration.
+	 */
 	public void ConfigureEndpoints() {
-		Endpoint.BuildFromURLs(new String[] { "http://peebot.blackcoyote.net:9000" }); // TODO read from plugin configuration
+		String urlInput = config.webhooks();
+		List<String> urls = new ArrayList<>();
+		if (urlInput != null && !urlInput.isBlank()) {
+			for (String url : config.webhooks().split(",")) {
+				urls.add(url.trim());
+			}
+		}
+		Endpoint.BuildFromURLs(urls);
 	}
 }
